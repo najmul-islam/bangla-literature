@@ -13,7 +13,7 @@ const {
 const { isUser } = require("../middlewares/authMiddleware");
 
 router.post("/register", register);
-router.post("/verify-email", verifyEmail);
+router.get("/verify-email", verifyEmail);
 router.post("/resend-verify-email", resendVerifyEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
