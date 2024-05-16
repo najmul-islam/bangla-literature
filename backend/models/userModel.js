@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    emailToken: {
+    verifyToken: {
       type: String,
     },
     tempPassword: {
@@ -49,6 +49,7 @@ userSchema.pre("save", async function (next) {
       const hashedPassword = await bcrypt.hash(this.password, salt);
 
       this.password = hashedPassword;
+      this.verifyToken = crypto.randomBytes(64).toString("hex");
 
       if (this.email === process.env.ADMIN_EMAIL.toLowerCase()) {
         this.role = "admin";
@@ -60,7 +61,7 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-userSchema.methods.generateEmailToken = async function () {
+userSchema.methods.generateVerifyToken = async function () {
   return crypto.randomBytes(64).toString("hex");
 };
 
