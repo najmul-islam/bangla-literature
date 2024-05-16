@@ -1,7 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const sendVerificationEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
 const sendTempPassword = require("../utils/sendTempPassword");
 const User = require("../models/userModel");
+const sendVerifyEmail = require("../utils/sendVerifyEmail");
 
 // register user
 const register = asyncHandler(async (req, res) => {
@@ -34,7 +35,7 @@ const register = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    sendVerificationEmail(user);
+    sendVerifyEmail(user);
 
     res.status(201).json({
       _id: user.id,
@@ -49,22 +50,23 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const verifyEmail = asyncHandler(async (req, res) => {
-  const { emailToken } = req.query;
+  const { verifyToken } = req.query;
 
-  if (!emailToken) {
+  if (!verifyToken) {
     res.status(404);
     throw new Error("Email token not found...");
   }
 
-  const user = await User.findOne({ emailToken });
+  const user = await User.findOne({ verifyToken });
 
   if (!user) {
     res.status(400);
-    throw new Error("User not found with this email token");
+    throw new Error("Invalid verification link provided, please try again");
   }
 
-  user.emailToken = null;
+  user.verifyToken = null;
   user.isVerified = true;
+  user.apikey = crypto.randomUUID();
   await user.save();
 
   res.status(200).json({
@@ -90,10 +92,10 @@ const resendVerifyEmail = asyncHandler(async (req, res) => {
     throw new Error("This account has already been verified");
   }
 
-  user.emailToken = user.generateEmailToken();
+  user.verifyToken = crypto.randomBytes(64).toString("hex");
   await user.save();
 
-  sendVerificationEmail(user);
+  sendVerifyEmail(user);
 
   res.status(200).json({
     _id: user.id,
@@ -107,19 +109,15 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
-
   if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
 
-  const updatedUser = await User.findOneAndUpdate(
-    { email },
-    { tempPassword: user.generateTempPassword() },
-    { new: true }
-  );
+  user.tempPassword = Math.floor(100000 + Math.random() * 900000);
+  await user.save();
 
-  sendTempPassword(updatedUser);
+  sendTempPassword(user);
 
   res.status(200).json({ message: "Temporary code sent successfully" });
 });
@@ -193,9 +191,18 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
+  if (!user) {
+    res.status(400);
+    throw new Error(
+      "Error login. Please check your email and password and try again"
+    );
+  }
+
   if (!user.isVerified) {
     res.status(400);
-    throw new Error("This account has not been verified.");
+    throw new Error(
+      "This account has not been verified. click below to resend verification email."
+    );
   }
 
   if (user && (await user.isValidPassword(password))) {
@@ -204,7 +211,6 @@ const login = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isVerified: user.isVerified,
-      apikey: user.apikey,
       token: user.generateToken(),
     });
   } else {
