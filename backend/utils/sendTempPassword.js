@@ -7,7 +7,7 @@ const sendTempPassword = async (user) => {
     to: user.email,
     subject: "bangla-literature reset password",
     html: `
-    <a href="${CLIENT_URL}">Bangla Literature</a>
+    <a href="${process.env.CLIENT_URL}">Bangla Literature</a>
     <p>Please use the following code for your API Ninjas verification code: <storng>${user.tempPassword}</storng></p>
     `,
   });
