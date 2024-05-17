@@ -1,12 +1,12 @@
-import { useProfileQuery } from "../../features/user/userApi";
-import { Button, Col, Row, Stack } from "react-bootstrap";
-import Loading from "../other/Loading";
-import Error from "../other/Error";
-import { useState } from "react";
 import moment from "moment";
+import { useState } from "react";
+import { Button, Col, Row, Stack } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { useProfileQuery } from "../../features/user/userApi";
+import Error from "../other/Error";
+import Loading from "../other/Loading";
 
 const Profile = () => {
   const [showApi, setShowApi] = useState(false);
@@ -17,9 +17,10 @@ const Profile = () => {
   const handleLogout = () => {
     dispatch(logout());
   };
+
   if (isLoading) return <Loading />;
   if (isError) return <Error message={error.data.message} />;
-  console.log(profile);
+
   const { name, email, createdAt, apikey } = profile;
   return (
     <Row>
@@ -84,11 +85,6 @@ const Profile = () => {
                 </Link>
               </p>
             </div>
-            {/* <div>
-              <Button variant="danger" size="sm">
-                Delete Account
-              </Button>
-            </div> */}
           </Stack>
         </div>
         <Stack className="py-3">

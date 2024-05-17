@@ -1,22 +1,23 @@
 import { Route, Routes } from "react-router-dom";
+
 // layout
 import PublicLayout from "../layouts/PublicLayout";
 import UserLayout from "../layouts/UserLayout";
 
 // public pages
-import HomePage from "../pages/public/HomePage";
-import ApiPage from "../pages/public/ApiPage";
-import ExamplesPage from "../pages/public/ExamplesPage";
-import BlogPage from "../pages/public/BlogPage";
-import RegisterPage from "../pages/auth/RegisterPage";
 import LoginPage from "../pages/auth/LoginPage";
+import RegisterPage from "../pages/auth/RegisterPage";
+import ApiPage from "../pages/public/ApiPage";
+import BlogPage from "../pages/public/BlogPage";
+import ExamplesPage from "../pages/public/ExamplesPage";
+import HomePage from "../pages/public/HomePage";
 
 // user pages
-import ProfilePage from "../pages/user/ProfilePage";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
-import VerifyEmailPage from "../pages/auth/VerifyEmailPage";
 import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+import VerifyEmailPage from "../pages/auth/VerifyEmailPage";
 import ChangePasswordPage from "../pages/user/ChangePasswordPage";
+import ProfilePage from "../pages/user/ProfilePage";
 
 const Router = () => {
   return (
@@ -38,9 +39,9 @@ const Router = () => {
         <Route path="change-password" element={<ChangePasswordPage />} />
       </Route>
 
-      <Route path="/moderator/" element={<UserLayout roles={["moderator"]} />}>
+      {/* <Route path="/moderator/" element={<UserLayout roles={["moderator"]} />}>
         <Route path="profile" element={<ProfilePage />} />
-      </Route>
+      </Route> */}
     </Routes>
   );
 };

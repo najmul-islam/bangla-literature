@@ -1,18 +1,18 @@
-import { Alert, Button, Col, Row, Form } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useEffect } from "react";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import toast from "react-hot-toast";
-import { changePasswordSchema } from "../../helpers/yup";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useChangePasswordMutation } from "../../features/user/userApi";
+import { changePasswordSchema } from "../../helpers/yup";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
 
   // state and mutation
   const { user } = useSelector((state) => state.auth);
-  const [changePassword, { data, isError, isSuccess, error }] =
+  const [changePassword, { isError, isSuccess, error }] =
     useChangePasswordMutation();
 
   // init form state
@@ -67,11 +67,7 @@ const ChangePassword = () => {
     <Row>
       <Col>
         {isError && <Alert variant="danger">{error?.data?.message}</Alert>}
-        {/* <Alert variant="primary">
-          If your account exists and is verified, we sent an email containing a
-          verification code. Please enter it in the box below along with a new
-          password of your choice.
-        </Alert> */}
+
         <h3 className="text-center py-3">Change Password</h3>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mt-3 mb-4" controlId="oldPassword">

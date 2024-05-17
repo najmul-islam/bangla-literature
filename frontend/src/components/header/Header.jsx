@@ -1,12 +1,9 @@
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import { Button, Container, Nav, Navbar, Stack } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
-import { Button, Stack } from "react-bootstrap";
 
-const NavBar = () => {
+const Header = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -62,4 +59,4 @@ const NavBar = () => {
     </Navbar>
   );
 };
-export default NavBar;
+export default Header;

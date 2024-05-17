@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
-import NavBar from "../components/header/Navbar";
+import Header from "../components/header/Header";
 
 const PublicLayout = () => {
   return (
-    <div>
-      <NavBar />
+    <>
+      <Header />
       <Outlet />
-    </div>
+    </>
   );
 };
 export default PublicLayout;

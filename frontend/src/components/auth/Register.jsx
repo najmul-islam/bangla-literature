@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import toast from "react-hot-toast";
 import { useFormik } from "formik";
+import { useEffect } from "react";
 import { Alert, Button, Col, Form, Row, Stack } from "react-bootstrap";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../../features/auth/authApi";
 import { registerSchema } from "../../helpers/yup";
 
@@ -15,7 +15,7 @@ const Register = () => {
   const { user } = useSelector((state) => state.auth);
   const [register, { isError, isSuccess, status, error }] =
     useRegisterMutation();
-  console.log(isError, isSuccess, error);
+
   // form value
   const initialValues = {
     name: "",
@@ -74,12 +74,8 @@ const Register = () => {
     handleChange,
     handleBlur,
     isSubmitting,
-    isValid,
   } = formik;
 
-  console.log("error", error);
-  console.log("status", status);
-  // console.log("formik", formik);
   return (
     !user && (
       <>
