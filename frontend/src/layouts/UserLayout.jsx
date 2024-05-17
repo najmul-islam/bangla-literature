@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import NavBar from "../components/header/Navbar";
@@ -15,3 +16,7 @@ const UserLayout = ({ roles = [] }) => {
   );
 };
 export default UserLayout;
+
+UserLayout.propTypes = {
+  roles: PropTypes.array,
+};
