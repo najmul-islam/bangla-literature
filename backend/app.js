@@ -5,12 +5,19 @@ const cors = require("./configs/cors");
 const database = require("./configs/database");
 const app = express();
 
+// set template engin
+app.set("view engine", "ejs");
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // route
 app.use("/api/user", require("./routes/userRoute"));
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
 
 // middleware
 app.use(require("./middlewares/notFoundMiddleware"));
