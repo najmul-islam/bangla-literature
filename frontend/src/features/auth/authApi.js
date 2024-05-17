@@ -9,6 +9,7 @@ export const authApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
@@ -25,6 +26,7 @@ export const authApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+
     resendVerifyEmail: builder.mutation({
       query: (data) => ({
         url: `/user/resend-verify-email`,
@@ -57,6 +59,22 @@ export const authApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: "/user/reset-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: "/user/change-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -66,4 +84,6 @@ export const {
   useVerifyEmailQuery,
   useResendVerifyEmailMutation,
   useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useChangePasswordMutation,
 } = authApi;

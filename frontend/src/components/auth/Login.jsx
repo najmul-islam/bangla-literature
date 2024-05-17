@@ -74,7 +74,7 @@ const Login = () => {
   // formik
   const formik = useFormik({
     initialValues,
-    loginSchema,
+    validationSchema: loginSchema,
     onSubmit,
   });
 
@@ -83,7 +83,7 @@ const Login = () => {
       toast.error(error?.data?.message);
     }
     if (isSuccess || user) {
-      navigate("/");
+      navigate("/user/profile");
       if (isSuccess && user) {
         toast.success("login successfully");
       }
@@ -107,7 +107,7 @@ const Login = () => {
     handleSubmit,
     handleChange,
     handleBlur,
-    isValid,
+    isSubmitting,
   } = formik;
 
   return (
@@ -149,39 +149,49 @@ const Login = () => {
 
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="email">
-              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
                 value={values.email}
                 onBlur={handleBlur}
                 onChange={handleChange}
-                placeholder="Enter email"
+                placeholder="Enter your email"
                 // error={Boolean(touched.email && errors.email)}
+                isInvalid={Boolean(touched.email && errors.email)}
               />
-              {touched.email && errors.email && (
-                <Form.Text className="text-danger">{errors.email}</Form.Text>
-              )}
+              <Form.Control.Feedback type="invalid">
+                {errors.email}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="password">
-              <Form.Label>Password</Form.Label>
               <Form.Control
                 name="password"
-                type={showPassword ? "text" : "password"}
+                type="password"
                 value={values.password}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 placeholder="Password"
+                isInvalid={Boolean(touched.password && errors.password)}
               />
-              <NavLink to="/forgot-password" className="py-2 nav-link text-end">
-                Forgot password?
-              </NavLink>
+              <Form.Control.Feedback type="invalid">
+                {errors.password}
+              </Form.Control.Feedback>
+              <div className="d-flex">
+                <NavLink
+                  to="/forgot-password"
+                  className="mt-2 fw-semibold ms-auto nav-link"
+                >
+                  Forgot password?
+                </NavLink>
+              </div>
             </Form.Group>
-            {touched.password && errors.password && (
-              <Form.Text className="text-danger">{errors.password}</Form.Text>
-            )}
             <div className="d-grid">
-              <Button variant="primary" type="submit" className="d-grid">
+              <Button
+                variant="primary"
+                type="submit"
+                className="d-grid"
+                disabled={isSubmitting}
+              >
                 Login
               </Button>
             </div>

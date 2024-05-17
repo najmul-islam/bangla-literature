@@ -1,4 +1,11 @@
+import { Container } from "react-bootstrap";
+import Profile from "../../components/user/Profile";
+
 const ProfilePage = () => {
-  return <div>ProfilePage</div>;
+  return (
+    <Container>
+      <Profile />
+    </Container>
+  );
 };
 export default ProfilePage;

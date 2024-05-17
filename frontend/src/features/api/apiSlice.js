@@ -24,6 +24,6 @@ export const apiSlice = createApi({
     }
     return result;
   },
-  tagTypes: ["AllGk", "SingleGk", "AllSubject", "SingleSubject"],
+  tagTypes: ["User"],
   endpoints: (builder) => ({}),
 });

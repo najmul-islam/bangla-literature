@@ -15,6 +15,8 @@ import LoginPage from "../pages/auth/LoginPage";
 import ProfilePage from "../pages/user/ProfilePage";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 import VerifyEmailPage from "../pages/auth/VerifyEmailPage";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+import ChangePasswordPage from "../pages/user/ChangePasswordPage";
 
 const Router = () => {
   return (
@@ -28,10 +30,12 @@ const Router = () => {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Route>
 
       <Route path="/user/" element={<UserLayout roles={["user"]} />}>
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="change-password" element={<ChangePasswordPage />} />
       </Route>
 
       <Route path="/moderator/" element={<UserLayout roles={["moderator"]} />}>

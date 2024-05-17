@@ -9,18 +9,15 @@ import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // state and mutation
   const { user } = useSelector((state) => state.auth);
-  const [forgotPassword, { data, isLoading, isError, isSuccess, error }] =
+  const [forgotPassword, { data, isError, isSuccess, error }] =
     useForgotPasswordMutation();
   // init form state
 
   const initialValues = {
     email: "",
-    verificationcode: "",
-    newpassword: "",
   };
 
   // handle submit
@@ -39,7 +36,7 @@ const ForgotPassword = () => {
   // formik
   const formik = useFormik({
     initialValues,
-    forgotPasswordSchema,
+    validationSchema: forgotPasswordSchema,
     onSubmit,
   });
 
@@ -48,101 +45,61 @@ const ForgotPassword = () => {
       toast.error(error?.data?.message);
     }
 
-    if (user) {
-      navigate("/profile");
+    if (isSuccess) {
+      navigate("/reset-password");
     }
-  }, [isError, user, navigate, error]);
 
-  const {
-    values,
-    touched,
-    errors,
-    handleSubmit,
-    handleChange,
-    handleBlur,
-    isValid,
-  } = formik;
+    if (user) {
+      navigate("/user/profile");
+    }
+  }, [isError, isSuccess, user, navigate, error]);
 
-  console.log(data);
-  console.log(isSuccess);
+  const { values, touched, errors, handleSubmit, handleChange, handleBlur } =
+    formik;
+
   return (
     <>
       <h4 className="text-center py-3">Forgot Password</h4>
       <hr />
-      {!isSuccess && (
-        <Row>
-          <Col>
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="email">
-                <Form.Control
-                  type="email"
-                  value={values.email}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  // error={Boolean(touched.email && errors.email)}
-                />
-                {touched.email && errors.email && (
-                  <Form.Text className="text-danger">{errors.email}</Form.Text>
-                )}
-              </Form.Group>
 
-              <div className="d-grid">
-                <Button variant="primary" type="submit" className="d-grid">
-                  Reset Password
-                </Button>
-              </div>
-            </Form>
-            <hr />
-            <Stack direction="horizontal" gap={1} className="text-center">
-              <h5 className="fw-light">Or back to</h5>
-              <NavLink to="/login" className="h5 fw-semibold">
-                Login
-              </NavLink>
-            </Stack>
-          </Col>
-        </Row>
-      )}
-
-      {isSuccess && (
-        <Row>
-          <Col>
-            <Alert variant="primary">
-              If your account exists and is verified, we sent an email
-              containing a verification code. Please enter it in the box below
-              along with a new password of your choice.
+      <Row>
+        <Col>
+          {isError && (
+            <Alert variant="danger py-3 text-center">
+              {error?.data.message}
             </Alert>
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="email">
-                <Form.Control
-                  type="number"
-                  value={values.email}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  // error={Boolean(touched.email && errors.email)}
-                />
-                {touched.email && errors.email && (
-                  <Form.Text className="text-danger">{errors.email}</Form.Text>
-                )}
-              </Form.Group>
+          )}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="py-3 mb-2" controlId="email">
+              <Form.Control
+                type="email"
+                name="email"
+                value={values.email}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                placeholder="Email"
+                isInvalid={touched.email && errors.email}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.email}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-              <div className="d-grid">
-                <Button variant="primary" type="submit" className="d-grid">
-                  Reset Password
-                </Button>
-              </div>
-            </Form>
-            <hr />
-            <Stack direction="horizontal" gap={1} className="text-center">
-              <h5 className="fw-light">Or back to</h5>
-              <NavLink to="/login" className="h5 fw-semibold">
-                Login
-              </NavLink>
-            </Stack>
-          </Col>
-        </Row>
-      )}
+            <div className="d-grid">
+              <Button variant="primary" type="submit" className="d-grid">
+                Reset Password
+              </Button>
+            </div>
+          </Form>
+          <hr />
+          <Stack direction="horizontal" gap={1} className="text-center">
+            <h5 className="fw-light">Or back to</h5>
+            <NavLink to="/login" className="h5 fw-semibold">
+              Login
+            </NavLink>
+          </Stack>
+        </Col>
+      </Row>
     </>
   );
 };
