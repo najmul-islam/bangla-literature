@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // route
-app.use("/user", require("./routes/userRoute"));
+app.use("/api/user", require("./routes/userRoute"));
 
 // middleware
 app.use(require("./middlewares/notFoundMiddleware"));
