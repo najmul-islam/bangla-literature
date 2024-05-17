@@ -1,7 +1,6 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
@@ -10,6 +9,7 @@ import { Button, Stack } from "react-bootstrap";
 const NavBar = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -56,18 +56,6 @@ const NavBar = () => {
                 </NavLink>
               </Stack>
             )}
-
-            {/* {user && (
-              <NavDropdown title="My Account" id="basic-nav-dropdown">
-                <NavLink to="/user/profile" className="dropdown-item">
-                  Profile
-                </NavLink>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>
-                  Logout
-                </NavDropdown.Item>
-              </NavDropdown>
-            )} */}
           </Nav>
         </Navbar.Collapse>
       </Container>
