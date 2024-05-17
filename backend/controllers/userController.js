@@ -16,16 +16,10 @@ const register = asyncHandler(async (req, res) => {
 
   // check if user exists
   const userExists = await User.findOne({ email });
-
   if (userExists) {
     res.status(400);
     throw new Error("A user is already associated with this email");
   }
-
-  // if (!userExists.isVerified) {
-  //   res.status(400);
-  //   throw new Error("user not verified");
-  // }
 
   // create user
   const user = await User.create({
@@ -34,6 +28,7 @@ const register = asyncHandler(async (req, res) => {
     password,
   });
 
+  // send verify email
   if (user) {
     sendVerifyEmail(user);
 
@@ -49,6 +44,7 @@ const register = asyncHandler(async (req, res) => {
   }
 });
 
+// verify email token
 const verifyEmail = asyncHandler(async (req, res) => {
   const { verifyToken } = req.query;
 
@@ -57,13 +53,14 @@ const verifyEmail = asyncHandler(async (req, res) => {
     throw new Error("Email token not found...");
   }
 
+  // check user
   const user = await User.findOne({ verifyToken });
-
   if (!user) {
     res.status(400);
     throw new Error("Invalid verification link provided, please try again");
   }
 
+  // after verify
   user.verifyToken = null;
   user.isVerified = true;
   user.apikey = crypto.randomUUID();
@@ -77,6 +74,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   });
 });
 
+// resend verify email
 const resendVerifyEmail = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
@@ -92,9 +90,11 @@ const resendVerifyEmail = asyncHandler(async (req, res) => {
     throw new Error("This account has already been verified");
   }
 
+  // generate verify token
   user.verifyToken = crypto.randomBytes(64).toString("hex");
   await user.save();
 
+  // send verify token in email
   sendVerifyEmail(user);
 
   res.status(200).json({
@@ -105,43 +105,44 @@ const resendVerifyEmail = asyncHandler(async (req, res) => {
   });
 });
 
+// forgot password
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
   if (!user) {
     res.status(404);
-    throw new Error("User not found");
+    throw new Error(
+      "Sorry, we couldn't find an account associated with this email address. Please double-check the email you entered and try again. If you don't have an account yet, you can register for free!"
+    );
   }
 
+  // generate temp password
   user.tempPassword = Math.floor(100000 + Math.random() * 900000);
   await user.save();
 
+  // send temp password
   sendTempPassword(user);
 
   res.status(200).json({ message: "Temporary code sent successfully" });
 });
 
+// reset password
 const resetPassword = asyncHandler(async (req, res) => {
-  const { email, tempPassword, newPassword, confirmPassword } = req.body;
+  const { tempPassword, newPassword, confirmPassword } = req.body;
 
-  const user = await User.findOne({ email });
-
+  const user = await User.findOne({ tempPassword });
   if (!user) {
-    res.status(404);
-    throw new Error("User not found");
-  }
-
-  if (user.tempPassword !== tempPassword) {
     res.status(400);
     throw new Error("Invalid temporary password");
   }
 
   if (newPassword !== confirmPassword) {
     res.status(400);
-    throw new Error("password and confirm password not match");
+    throw new Error("Password and confirm password not match");
   }
 
+  // reset password with new password
   user.password = newPassword;
   user.tempPassword = null;
   await user.save();
@@ -154,6 +155,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
+// chenge password
 const changePassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
 
@@ -182,6 +184,7 @@ const changePassword = asyncHandler(async (req, res) => {
     _id: user.id,
     name: user.name,
     email: user.email,
+    role: user.role,
     isVerified: user?.isVerified,
   });
 });
@@ -211,6 +214,7 @@ const login = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isVerified: user.isVerified,
+      role: user.role,
       token: user.generateToken(),
     });
   } else {
