@@ -2,14 +2,14 @@ const asyncHandler = require("express-async-handler");
 
 const isApikey = asyncHandler(async (req, res, next) => {
   let apikey;
-  if (req.headers["x-api-key"]) {
-    apikey = req.headers["x-api-key"];
+  if (req.headers["X-Api-Key"]) {
+    apikey = req.headers["X-Api-Key"];
     req.apikey = apikey;
     next();
   } else {
     return res
       .status(401)
-      .json({ message: "APi key is missing in your header" });
+      .json({ message: "API key is missing in your header" });
   }
 });
 
