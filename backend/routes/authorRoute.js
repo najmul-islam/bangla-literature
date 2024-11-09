@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-
 const {
   getAllAuthor,
   getSingleAuthor,
@@ -9,13 +8,14 @@ const {
   deleteAuthor,
 } = require("../controllers/authorController");
 const avatarUpload = require("../middlewares/avatarMiddleware");
-const { isUser, isModerator } = require("../middlewares/authMiddleware");
+const { isModerator } = require("../middlewares/userMiddleware");
 const { isApikey } = require("../middlewares/apikeyMiddleware");
 
-router.get("/", isUser, isApikey, getAllAuthor);
-router.get("/:id", isUser, isApikey, getSingleAuthor);
-router.post("/", isUser, isModerator, isApikey, avatarUpload, postAuthor);
-router.put("/:id", isUser, isModerator, isApikey, avatarUpload, putAuthor);
-router.delete("/:id", isUser, isModerator, isApikey, deleteAuthor);
+router.get("/", isApikey, getAllAuthor);
+router.get("/:id", isApikey, getSingleAuthor);
+
+router.post("/", isModerator, avatarUpload, postAuthor);
+router.put("/:id", isModerator, avatarUpload, putAuthor);
+router.delete("/:id", isModerator, deleteAuthor);
 
 module.exports = router;

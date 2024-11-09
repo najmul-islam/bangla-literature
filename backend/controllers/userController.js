@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const crypto = require("crypto");
 const sendTempPassword = require("../utils/sendTempPassword");
-const User = require("../models/userModel");
 const sendVerifyEmail = require("../utils/sendVerifyEmail");
+const crypto = require("crypto");
+const User = require("../models/userModel");
 
 // register user
 const register = asyncHandler(async (req, res) => {

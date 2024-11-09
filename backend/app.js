@@ -16,7 +16,9 @@ app.use(fileupload());
 
 // route
 app.use("/user", require("./routes/userRoute"));
-app.use("/api/author", require("./routes/authorRoute"));
+app.use("/service", require("./routes/serviceRoute"));
+app.use("/api/v1/authors", require("./routes/authorRoute"));
+app.use("/api/v1/quotes", require("./routes/quoteRoute"));
 
 app.get("/", (req, res) => {
   res.render("index");
