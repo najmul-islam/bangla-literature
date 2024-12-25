@@ -38,8 +38,9 @@ const authorizeRole = (roles) =>
   });
 
 // Middleware functions for different roles
+const isUser = authorizeRole(["user", "subscriber", "moderator", "admin"]);
 const isSubscriber = authorizeRole(["subscriber", "moderator", "admin"]);
 const isModerator = authorizeRole(["moderator", "admin"]);
 const isAdmin = authorizeRole(["admin"]);
 
-module.exports = { isSubscriber, isModerator, isAdmin };
+module.exports = { isUser, isSubscriber, isModerator, isAdmin };

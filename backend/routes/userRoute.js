@@ -10,7 +10,7 @@ const {
   resetPassword,
   changePassword,
 } = require("../controllers/userController");
-const { isSubscriber } = require("../middlewares/userMiddleware");
+const { isUser } = require("../middlewares/userMiddleware");
 
 router.post("/register", register);
 router.get("/verify-email", verifyEmail);
@@ -18,7 +18,7 @@ router.post("/resend-verify-email", resendVerifyEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.post("/login", login);
-router.get("/profile", isSubscriber, profile);
-router.post("/change-password", isSubscriber, changePassword);
+router.get("/profile", isUser, profile);
+router.post("/change-password", isUser, changePassword);
 
 module.exports = router;
