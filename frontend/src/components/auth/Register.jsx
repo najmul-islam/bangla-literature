@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { Alert, Button, Col, Form, Row, Stack } from "react-bootstrap";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,8 +13,7 @@ const Register = () => {
 
   // rtk
   const { user } = useSelector((state) => state.user);
-  const [register, { isError, isSuccess, status, error }] =
-    useRegisterMutation();
+  const [register, { isError, isSuccess, error }] = useRegisterMutation();
 
   // form value
   const initialValues = {
