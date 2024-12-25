@@ -1,19 +1,17 @@
-import PropTypes from "prop-types";
-import { Container } from "react-bootstrap";
-import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import Footer from "../components/footer/Footer";
+import { useSelector } from "react-redux";
 import Header from "../components/header/Header";
+import Footer from "../components/footer/Footer";
+import Loading from "../components/other/Loading";
 
-const UserLayout = ({ roles = [] }) => {
-  const { user } = useSelector((state) => state.auth);
+const UserLayout = () => {
+  const { user, isLoading } = useSelector((state) => state.user);
 
-  return !roles.length || roles.includes(user?.role) ? (
+  if (isLoading) return <Loading />;
+  return user ? (
     <>
       <Header />
-      <Container>
-        <Outlet />
-      </Container>
+      <Outlet />
       <Footer />
     </>
   ) : (
@@ -22,7 +20,3 @@ const UserLayout = ({ roles = [] }) => {
 };
 
 export default UserLayout;
-
-UserLayout.propTypes = {
-  roles: PropTypes.array,
-};
