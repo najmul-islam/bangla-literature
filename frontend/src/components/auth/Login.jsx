@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { Alert, Button, Col, Form, Row, Stack } from "react-bootstrap";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,8 +15,9 @@ const Login = () => {
   const dispatch = useDispatch();
 
   // state and mutation
-  const { user } = useSelector((state) => state.auth);
-  const [login, { isLoading, isError, isSuccess, error }] = useLoginMutation();
+  const { user } = useSelector((state) => state.user);
+  const [login, { data, isLoading, isError, isSuccess, error }] =
+    useLoginMutation();
 
   const [
     resendVerifyEmail,
@@ -58,17 +59,17 @@ const Login = () => {
     onSubmit,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isError) {
       toast.error(error?.data?.message);
     }
     if (isSuccess || user) {
-      navigate("/user/profile");
+      navigate(`/profile`);
       if (isSuccess && user) {
         toast.success("login successfully");
       }
     }
-  }, [user, isError, isSuccess, navigate, dispatch, error]);
+  }, [user, isError, isSuccess, navigate, dispatch, error, data]);
 
   useEffect(() => {
     if (resendError) {
@@ -110,10 +111,10 @@ const Login = () => {
 
             {isError &&
               !resendIsSuccess &&
-              (error.data.message ===
+              (error?.data?.message ===
               "This account has not been verified. click below to resend verification email." ? (
                 <Alert variant="warning py-3 text-center">
-                  {error?.data.message}
+                  {error?.data?.message}
                   <Button
                     variant="warning"
                     className="my-3"
@@ -124,7 +125,7 @@ const Login = () => {
                 </Alert>
               ) : (
                 <Alert variant="danger py-3 text-center">
-                  {error?.data.message}
+                  {error?.data?.message}
                 </Alert>
               ))}
 
@@ -140,7 +141,7 @@ const Login = () => {
                   isInvalid={Boolean(touched.email && errors.email)}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.email}
+                  {errors?.email}
                 </Form.Control.Feedback>
               </Form.Group>
 
@@ -151,7 +152,7 @@ const Login = () => {
                   value={values.password}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  placeholder="Password"
+                  placeholder="Enter your password"
                   isInvalid={Boolean(touched.password && errors.password)}
                 />
                 <Form.Control.Feedback type="invalid">
