@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import toast from "react-hot-toast";
 import { useFormik } from "formik";
+import { useEffect } from "react";
 import { Alert, Button, Col, Form, Row, Stack } from "react-bootstrap";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../../features/auth/authApi";
 import { registerSchema } from "../../helpers/yup";
 
@@ -12,10 +12,9 @@ const Register = () => {
   const dispatch = useDispatch();
 
   // rtk
-  const { user } = useSelector((state) => state.auth);
-  const [register, { isError, isSuccess, status, error }] =
-    useRegisterMutation();
-  console.log(isError, isSuccess, error);
+  const { user } = useSelector((state) => state.user);
+  const [register, { isError, isSuccess, error }] = useRegisterMutation();
+
   // form value
   const initialValues = {
     name: "",
@@ -51,7 +50,7 @@ const Register = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/user/profile");
+      navigate("/profile");
     }
 
     if (isError) {
@@ -74,12 +73,8 @@ const Register = () => {
     handleChange,
     handleBlur,
     isSubmitting,
-    isValid,
   } = formik;
 
-  console.log("error", error);
-  console.log("status", status);
-  // console.log("formik", formik);
   return (
     !user && (
       <>
@@ -108,7 +103,7 @@ const Register = () => {
               noValidate
             >
               <Form.Group className="mb-3" controlId="name">
-                <Form.Label>Name</Form.Label>
+                {/* <Form.Label>Name</Form.Label> */}
                 <Form.Control
                   type="text"
                   name="name"
@@ -124,23 +119,27 @@ const Register = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="email">
-                <Form.Label>Email</Form.Label>
+                {/* <Form.Label>Email</Form.Label> */}
                 <Form.Control
                   type="email"
                   name="email"
                   value={values.email}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  placeholder="Enter email"
+                  placeholder="Enter your email"
                   isInvalid={touched.email && errors.email}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.email}
                 </Form.Control.Feedback>
               </Form.Group>
-
+              <p className="mt-4 mb-0">
+                <small>
+                  Password must contain at least 8 characters and 1 number.
+                </small>
+              </p>
               <Form.Group className="mb-3" controlId="password">
-                <Form.Label>Password</Form.Label>
+                {/* <Form.Label>Password</Form.Label> */}
                 <Form.Control
                   name="password"
                   type="password"
@@ -155,8 +154,8 @@ const Register = () => {
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="password">
-                <Form.Label>Password</Form.Label>
+              <Form.Group className="mb-3" controlId="confirmPassword">
+                {/* <Form.Label>Password</Form.Label> */}
                 <Form.Control
                   name="confirmPassword"
                   type="password"

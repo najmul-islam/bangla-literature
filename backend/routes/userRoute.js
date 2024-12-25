@@ -10,7 +10,7 @@ const {
   resetPassword,
   changePassword,
 } = require("../controllers/userController");
-const { isUser } = require("../middlewares/authMiddleware");
+const { isUser } = require("../middlewares/userMiddleware");
 
 router.post("/register", register);
 router.get("/verify-email", verifyEmail);

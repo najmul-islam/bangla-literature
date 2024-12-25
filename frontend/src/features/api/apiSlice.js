@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logout } from "../auth/authSlice";
+import { userAction } from "../user/userSlice";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   prepareHeaders: async (headers, { getState, endpoints }) => {
-    const token = getState()?.auth?.user?.token;
+    const token = getState()?.auth?.token;
 
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
@@ -20,7 +21,8 @@ export const apiSlice = createApi({
 
     if (result?.error?.status === 401) {
       api.dispatch(logout());
-      localStorage.removeItem("user");
+      api.dispatch(userAction(undefined));
+      localStorage.removeItem("token");
     }
     return result;
   },

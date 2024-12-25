@@ -1,21 +1,22 @@
+import toast from "react-hot-toast";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
-import { Button, Col, Row, Stack, Form, Alert } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { Alert, Button, Col, Form, Row, Stack } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useForgotPasswordMutation } from "../../features/auth/authApi";
 import { forgotPasswordSchema } from "../../helpers/yup";
-import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
 
   // state and mutation
   const { user } = useSelector((state) => state.auth);
-  const [forgotPassword, { data, isError, isSuccess, error }] =
-    useForgotPasswordMutation();
-  // init form state
 
+  const [forgotPassword, { isError, isSuccess, error }] =
+    useForgotPasswordMutation();
+
+  // init form state
   const initialValues = {
     email: "",
   };
@@ -58,49 +59,51 @@ const ForgotPassword = () => {
     formik;
 
   return (
-    <>
-      <h4 className="text-center py-3">Forgot Password</h4>
-      <hr />
+    !user && (
+      <>
+        <h4 className="text-center py-3">Forgot Password</h4>
+        <hr />
 
-      <Row>
-        <Col>
-          {isError && (
-            <Alert variant="danger py-3 text-center">
-              {error?.data.message}
-            </Alert>
-          )}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="py-3 mb-2" controlId="email">
-              <Form.Control
-                type="email"
-                name="email"
-                value={values.email}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                placeholder="Email"
-                isInvalid={touched.email && errors.email}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.email}
-              </Form.Control.Feedback>
-            </Form.Group>
+        <Row>
+          <Col>
+            {isError && (
+              <Alert variant="danger py-3 text-center">
+                {error?.data.message}
+              </Alert>
+            )}
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="py-3 mb-2" controlId="email">
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={values.email}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  isInvalid={touched.email && errors.email}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.email}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-            <div className="d-grid">
-              <Button variant="primary" type="submit" className="d-grid">
-                Reset Password
-              </Button>
-            </div>
-          </Form>
-          <hr />
-          <Stack direction="horizontal" gap={1} className="text-center">
-            <h5 className="fw-light">Or back to</h5>
-            <NavLink to="/login" className="h5 fw-semibold">
-              Login
-            </NavLink>
-          </Stack>
-        </Col>
-      </Row>
-    </>
+              <div className="d-grid">
+                <Button variant="primary" type="submit" className="d-grid">
+                  Reset Password
+                </Button>
+              </div>
+            </Form>
+            <hr />
+            <Stack direction="horizontal" gap={1} className="text-center">
+              <h5 className="fw-light">Or back to</h5>
+              <NavLink to="/login" className="h5 fw-semibold">
+                Login
+              </NavLink>
+            </Stack>
+          </Col>
+        </Row>
+      </>
+    )
   );
 };
 export default ForgotPassword;

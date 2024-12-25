@@ -1,26 +1,23 @@
-import { useProfileQuery } from "../../features/user/userApi";
-import { Button, Col, Row, Stack } from "react-bootstrap";
-import Loading from "../other/Loading";
-import Error from "../other/Error";
-import { useState } from "react";
 import moment from "moment";
+import { useState } from "react";
+import { Button, Col, Row, Stack } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { userAction } from "../../features/user/userSlice";
 
 const Profile = () => {
   const [showApi, setShowApi] = useState(false);
   const dispatch = useDispatch();
 
-  const { data: profile, isLoading, isError, error } = useProfileQuery();
+  const { user } = useSelector((state) => state.user);
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(userAction(undefined));
   };
-  if (isLoading) return <Loading />;
-  if (isError) return <Error message={error.data.message} />;
-  console.log(profile);
-  const { name, email, createdAt, apikey } = profile;
+
+  const { name, email, createdAt, apikey } = user;
   return (
     <Row>
       <Col></Col>
@@ -76,19 +73,11 @@ const Profile = () => {
               <h6>Password</h6>
               <p className="d-flex gap-2 align-items-center">
                 (hidden){" "}
-                <Link
-                  to="/user/change-password"
-                  className="btn btn-warning btn-sm"
-                >
+                <Link to="/change-password" className="btn btn-warning btn-sm">
                   Change password
                 </Link>
               </p>
             </div>
-            {/* <div>
-              <Button variant="danger" size="sm">
-                Delete Account
-              </Button>
-            </div> */}
           </Stack>
         </div>
         <Stack className="py-3">

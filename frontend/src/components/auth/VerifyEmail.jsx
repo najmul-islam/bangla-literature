@@ -1,14 +1,8 @@
-import {
-  NavLink,
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import { useVerifyEmailQuery } from "../../features/auth/authApi";
-import { Alert } from "react-bootstrap";
 import { useEffect } from "react";
+import { Alert } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import { useVerifyEmailQuery } from "../../features/auth/authApi";
 
 const VerifyEmail = () => {
   const [query, setQuery] = useSearchParams();
@@ -29,21 +23,23 @@ const VerifyEmail = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div>
-      {isError && (
-        <Alert variant="danger py-3 text-center">{error.data.message}</Alert>
-      )}
+    !user && (
+      <div>
+        {isError && (
+          <Alert variant="danger py-3 text-center">{error.data.message}</Alert>
+        )}
 
-      {data?.isVerified && (
-        <Alert variant="primary py-3">
-          Email verify successful.
-          <NavLink to="/login" className="mx-2 fw-bold">
-            login here
-          </NavLink>
-          with your email and password link.
-        </Alert>
-      )}
-    </div>
+        {data?.isVerified && (
+          <Alert variant="primary py-3">
+            Email verify successful.
+            <NavLink to="/login" className="mx-2 fw-bold">
+              login here
+            </NavLink>
+            with your email and password link.
+          </Alert>
+        )}
+      </div>
+    )
   );
 };
 export default VerifyEmail;

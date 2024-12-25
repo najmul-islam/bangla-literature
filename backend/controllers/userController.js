@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const crypto = require("crypto");
 const sendTempPassword = require("../utils/sendTempPassword");
-const User = require("../models/userModel");
 const sendVerifyEmail = require("../utils/sendVerifyEmail");
+const crypto = require("crypto");
+const User = require("../models/userModel");
 
 // register user
 const register = asyncHandler(async (req, res) => {
@@ -54,17 +54,22 @@ const verifyEmail = asyncHandler(async (req, res) => {
   }
 
   // check user
-  const user = await User.findOne({ verifyToken });
+  const user = await User.findOneAndUpdate(
+    { verifyToken },
+    {
+      $set: {
+        verifyToken: null,
+        isVerified: true,
+        apikey: crypto.randomUUID(),
+      },
+    },
+    { new: true }
+  );
+
   if (!user) {
     res.status(400);
     throw new Error("Invalid verification link provided, please try again");
   }
-
-  // after verify
-  user.verifyToken = null;
-  user.isVerified = true;
-  user.apikey = crypto.randomUUID();
-  await user.save();
 
   res.status(200).json({
     _id: user.id,
@@ -91,17 +96,21 @@ const resendVerifyEmail = asyncHandler(async (req, res) => {
   }
 
   // generate verify token
-  user.verifyToken = crypto.randomBytes(64).toString("hex");
-  await user.save();
+  const verifyToken = crypto.randomBytes(64).toString("hex");
+  const updatedUser = await User.findOneAndUpdate(
+    { email },
+    { $set: { verifyToken } },
+    { new: true }
+  );
 
   // send verify token in email
-  sendVerifyEmail(user);
+  sendVerifyEmail(updatedUser);
 
   res.status(200).json({
-    _id: user.id,
-    name: user.name,
-    email: user.email,
-    isVerified: user?.isVerified,
+    _id: updatedUser.id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    isVerified: updatedUser?.isVerified,
   });
 });
 
@@ -184,7 +193,7 @@ const changePassword = asyncHandler(async (req, res) => {
     _id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role,
+    // role: user.role,
     isVerified: user?.isVerified,
   });
 });
@@ -213,8 +222,8 @@ const login = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
-      isVerified: user.isVerified,
-      role: user.role,
+      // isVerified: user.isVerified,
+      // role: user.role,
       token: user.generateToken(),
     });
   } else {

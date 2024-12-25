@@ -1,22 +1,22 @@
-import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import NavBar from "../components/header/Navbar";
+import { useSelector } from "react-redux";
+import Header from "../components/header/Header";
+import Footer from "../components/footer/Footer";
+import Loading from "../components/other/Loading";
 
-const UserLayout = ({ roles = [] }) => {
-  const { user } = useSelector((state) => state.auth);
+const UserLayout = () => {
+  const { user, isLoading } = useSelector((state) => state.user);
 
-  return !roles.length || roles.includes(user?.role) ? (
-    <div>
-      <NavBar />
+  if (isLoading) return <Loading />;
+  return user ? (
+    <>
+      <Header />
       <Outlet />
-    </div>
+      <Footer />
+    </>
   ) : (
     <Navigate to="/login" replace />
   );
 };
-export default UserLayout;
 
-UserLayout.propTypes = {
-  roles: PropTypes.array,
-};
+export default UserLayout;

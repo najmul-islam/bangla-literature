@@ -9,7 +9,7 @@ const sendTempPassword = async (user) => {
       subject: "bangla-literature reset password",
       html: `
     <a href="${process.env.CLIENT_URL}">Bangla Literature</a>
-    <p>Please use the following code for your API Ninjas verification code: <storng>${user.tempPassword}</storng></p>
+    <p>Please use the following code for your <strong>Bangla Literaure</strong> verification code: <strong>${user.tempPassword}</strong></p>
     `,
     };
 

@@ -1,33 +1,23 @@
-import { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useFormik } from "formik";
 import toast from "react-hot-toast";
-import { loginSchema } from "../../helpers/yup";
+import { useFormik } from "formik";
+import { useEffect, useLayoutEffect } from "react";
+import { Alert, Button, Col, Form, Row, Stack } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   useLoginMutation,
   useResendVerifyEmailMutation,
 } from "../../features/auth/authApi";
-import {
-  Container,
-  Form,
-  Button,
-  Row,
-  Col,
-  Stack,
-  Alert,
-} from "react-bootstrap";
+import { loginSchema } from "../../helpers/yup";
 
 const Login = () => {
-  const [checked, setChecked] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // state and mutation
-  const { user } = useSelector((state) => state.auth);
-  const [login, { isLoading, isError, isSuccess, error }] = useLoginMutation();
+  const { user } = useSelector((state) => state.user);
+  const [login, { data, isLoading, isError, isSuccess, error }] =
+    useLoginMutation();
 
   const [
     resendVerifyEmail,
@@ -38,15 +28,6 @@ const Login = () => {
       error: resendError,
     },
   ] = useResendVerifyEmailMutation();
-  // show password
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  // mouse dowon
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
 
   const handleResendConfirmationEmail = (email) => {
     resendVerifyEmail({ email });
@@ -78,17 +59,17 @@ const Login = () => {
     onSubmit,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isError) {
       toast.error(error?.data?.message);
     }
     if (isSuccess || user) {
-      navigate("/user/profile");
+      navigate(`/profile`);
       if (isSuccess && user) {
         toast.success("login successfully");
       }
     }
-  }, [user, isError, isSuccess, navigate, dispatch, error]);
+  }, [user, isError, isSuccess, navigate, dispatch, error, data]);
 
   useEffect(() => {
     if (resendError) {
@@ -111,246 +92,103 @@ const Login = () => {
   } = formik;
 
   return (
-    <>
-      <h4 className="text-center py-3">Login in your Account</h4>
-      <Row>
-        <Col>
-          {resendIsError && (
-            <Alert variant="danger py-3 text-center">
-              {resendError.data.message}
-            </Alert>
-          )}
-
-          {resendIsSuccess && (
-            <Alert variant="success py-3 text-center">
-              Verification email successfully sent!
-            </Alert>
-          )}
-
-          {isError &&
-            !resendIsSuccess &&
-            (error.data.message ===
-            "This account has not been verified. click below to resend verification email." ? (
-              <Alert variant="warning py-3 text-center">
-                {error?.data.message}
-                <Button
-                  variant="warning"
-                  className="my-3"
-                  onClick={() => handleResendConfirmationEmail(values.email)}
-                >
-                  Resend Confirmation Email
-                </Button>
-              </Alert>
-            ) : (
+    !user && (
+      <>
+        <h4 className="text-center py-3">Login in your Account</h4>
+        <Row>
+          <Col>
+            {resendIsError && (
               <Alert variant="danger py-3 text-center">
-                {error?.data.message}
+                {resendError.data.message}
               </Alert>
-            ))}
-
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="email">
-              <Form.Control
-                type="email"
-                value={values.email}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                // error={Boolean(touched.email && errors.email)}
-                isInvalid={Boolean(touched.email && errors.email)}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.email}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="password">
-              <Form.Control
-                name="password"
-                type="password"
-                value={values.password}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                placeholder="Password"
-                isInvalid={Boolean(touched.password && errors.password)}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.password}
-              </Form.Control.Feedback>
-              <div className="d-flex">
-                <NavLink
-                  to="/forgot-password"
-                  className="mt-2 fw-semibold ms-auto nav-link"
-                >
-                  Forgot password?
-                </NavLink>
-              </div>
-            </Form.Group>
-            <div className="d-grid">
-              <Button
-                variant="primary"
-                type="submit"
-                className="d-grid"
-                disabled={isSubmitting}
-              >
-                Login
-              </Button>
-            </div>
-          </Form>
-          <hr />
-          <Stack direction="horizontal" gap={1} className="text-center">
-            <h5 className="fw-light">Already have an account?</h5>
-            <NavLink to="/register" className="h5 fw-semibold">
-              Register
-            </NavLink>
-          </Stack>
-        </Col>
-      </Row>
-
-      {/* <Box
-        sx={{
-          borderRadius: "10px",
-          paddingY: "20px",
-          paddingX: "30px",
-          border: (theme) => `1px solid ${theme.palette.divider}`,
-        }}
-      >
-        <Stack
-          direction="row"
-          marginBottom={3}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="h6" fontWeight="800">
-            Login
-          </Typography>
-          <Typography
-            component={RouterLink}
-            to="/register"
-            variant="subtitle2"
-            sx={{ textDecoration: "none" }}
-            color="primary"
-          >
-            Don&apos;t have an account?
-          </Typography>
-        </Stack>
-        <form noValidate onSubmit={handleSubmit}>
-          <Stack spacing={1} marginBottom={3}>
-            <InputLabel htmlFor="email-login">Email Address</InputLabel>
-            <OutlinedInput
-              id="email-login"
-              type="email"
-              value={values.email}
-              name="email"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              placeholder="Enter email address"
-              fullWidth
-              error={Boolean(touched.email && errors.email)}
-              sx={{ height: "45px" }}
-            />
-            {touched.email && errors.email && (
-              <FormHelperText
-                error
-                id="standard-weight-helper-text-email-login"
-              >
-                {errors.email}
-              </FormHelperText>
             )}
-          </Stack>
 
-          <Stack spacing={1} marginBottom={3}>
-            <InputLabel htmlFor="password-login">Password</InputLabel>
-            <OutlinedInput
-              fullWidth
-              error={Boolean(touched.password && errors.password)}
-              id="password-login"
-              type={showPassword ? "text" : "password"}
-              value={values.password}
-              name="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                    size="large"
+            {resendIsSuccess && (
+              <Alert variant="success py-3 text-center">
+                Verification email successfully sent!
+              </Alert>
+            )}
+
+            {isError &&
+              !resendIsSuccess &&
+              (error?.data?.message ===
+              "This account has not been verified. click below to resend verification email." ? (
+                <Alert variant="warning py-3 text-center">
+                  {error?.data?.message}
+                  <Button
+                    variant="warning"
+                    className="my-3"
+                    onClick={() => handleResendConfirmationEmail(values.email)}
                   >
-                    {showPassword ? (
-                      <VisibilityOutlined />
-                    ) : (
-                      <VisibilityOffOutlined />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              }
-              placeholder="Enter password"
-              sx={{ height: "45px" }}
-            />
-            {touched.password && errors.password && (
-              <FormHelperText
-                error
-                id="standard-weight-helper-text-password-login"
-              >
-                {errors.password}
-              </FormHelperText>
-            )}
-          </Stack>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
-            marginBottom={3}
-          >
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={checked}
-                  onChange={(event) => setChecked(event.target.checked)}
-                  name="checked"
-                  color="primary"
-                  size="small"
+                    Resend Confirmation Email
+                  </Button>
+                </Alert>
+              ) : (
+                <Alert variant="danger py-3 text-center">
+                  {error?.data?.message}
+                </Alert>
+              ))}
+
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="email">
+                <Form.Control
+                  type="email"
+                  value={values.email}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  // error={Boolean(touched.email && errors.email)}
+                  isInvalid={Boolean(touched.email && errors.email)}
                 />
-              }
-              label={<Typography variant="body2">Keep me sign in</Typography>}
-            />
-            <Link
-              variant="body2"
-              component={RouterLink}
-              to=""
-              color="primary"
-              sx={{ textDecoration: "none" }}
-            >
-              Forgot Password?
-            </Link>
-          </Stack>
+                <Form.Control.Feedback type="invalid">
+                  {errors?.email}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-          {errors.submit && (
-            <FormHelperText error>{errors.submit}</FormHelperText>
-          )}
-
-          <Button
-            disableElevation
-            disabled={
-              isLoading ||
-              !isValid ||
-              values.email === "" ||
-              values.password === ""
-            }
-            fullWidth
-            size="large"
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
-            {isLoading ? <CircularProgress size={25} /> : " Login"}
-          </Button>
-        </form>
-      </Box> */}
-    </>
+              <Form.Group className="mb-3" controlId="password">
+                <Form.Control
+                  name="password"
+                  type="password"
+                  value={values.password}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  isInvalid={Boolean(touched.password && errors.password)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.password}
+                </Form.Control.Feedback>
+                <div className="d-flex">
+                  <NavLink
+                    to="/forgot-password"
+                    className="mt-2 fw-semibold ms-auto nav-link"
+                  >
+                    Forgot password?
+                  </NavLink>
+                </div>
+              </Form.Group>
+              <div className="d-grid">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="d-grid"
+                  disabled={isSubmitting}
+                >
+                  Login
+                </Button>
+              </div>
+            </Form>
+            <hr />
+            <Stack direction="horizontal" gap={1} className="text-center">
+              <h5 className="fw-light">Already have an account?</h5>
+              <NavLink to="/register" className="h5 fw-semibold">
+                Register
+              </NavLink>
+            </Stack>
+          </Col>
+        </Row>
+      </>
+    )
   );
 };
 
