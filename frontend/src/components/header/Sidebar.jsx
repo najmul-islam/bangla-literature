@@ -1,13 +1,10 @@
+import PropTypes from "prop-types";
 import { Button, Offcanvas, Stack } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const Sidebar = ({
-  user,
-  handleLogout,
-  showSidebar,
-  handleSidebarHide,
-  props,
-}) => {
+const Sidebar = ({ handleLogout, showSidebar, handleSidebarHide, props }) => {
+  const { user } = useSelector((state) => state.user);
   return (
     <Offcanvas
       placement="end"
@@ -36,7 +33,7 @@ const Sidebar = ({
 
         {user ? (
           <Stack className="py-3" gap={2}>
-            <NavLink to="/user/profile" className="btn btn-outline-primary">
+            <NavLink to="/profile" className="btn btn-outline-primary">
               Profile
             </NavLink>
 
@@ -45,11 +42,11 @@ const Sidebar = ({
             </Button>
           </Stack>
         ) : (
-          <Stack className="py-3">
+          <Stack gap={2} className="py-3">
             <NavLink to="/register" className="btn btn-outline-primary">
               Register
             </NavLink>
-            <NavLink to="/login" className="nav-link">
+            <NavLink to="/login" className="btn btn-primary">
               Login
             </NavLink>
           </Stack>
@@ -59,3 +56,10 @@ const Sidebar = ({
   );
 };
 export default Sidebar;
+
+Sidebar.propTypes = {
+  handleLogout: PropTypes.func,
+  handleSidebarHide: PropTypes.func,
+  showSidebar: PropTypes.bool,
+  props: PropTypes.any,
+};
